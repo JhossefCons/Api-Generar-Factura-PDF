@@ -90,42 +90,39 @@ public class PdfService {
         clientDetails.addCell(new Cell().add(boldText("TIPO DE PERSONA:","**tipo de persona**")));
         document.add(clientDetails);
 
-        // Tabla de productos
+        // tabla de productos
         document.add(new Paragraph("PRODUCTOS").setTextAlignment(TextAlignment.CENTER).setBold());
-        Table itemTable = new Table(new float[]{2, 2, 2, 2, 2, 2, 2});
+        Table itemTable = new Table(new float[]{1, 3, 1, 2, 2});
         itemTable.setWidthPercent(100);
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("CANTIDAD").setBold().setFontSize(8)));
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("DESCRIPCIÓN").setBold().setFontSize(8)));
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("IVA").setBold().setFontSize(8)));
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("PRECIO UNITARIO").setBold().setFontSize(8)));
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("VALOR TOTAL").setBold().setFontSize(8)));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("CANTIDAD").setBold()));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("DESCRIPCIÓN").setBold()));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("IVA").setBold()));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("PRECIO UNITARIO").setBold()));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("VALOR TOTAL").setBold()));
 
-        // productos
+        // Productos
         List<List<String>> items = Arrays.asList(
                 Arrays.asList("564", "PASTILLA DE CUAJO", "19%", "2326", "1,311,864"),
                 Arrays.asList("2", "SAL", "NO APLICA", "23,260", "46,520")
         );
 
         for (List<String> item : items) {
-            for (String detail : item) {
-                itemTable.addCell(new Cell().add(new Paragraph(detail)));
-            }
+            itemTable.addCell(new Cell().add(new Paragraph(item.get(0))));
+            itemTable.addCell(new Cell().add(new Paragraph(item.get(1))));
+            itemTable.addCell(new Cell().add(new Paragraph(item.get(2))));
+            itemTable.addCell(new Cell().add(new Paragraph(item.get(3))));
+            itemTable.addCell(new Cell().add(new Paragraph(item.get(4))));
         }
         document.add(itemTable);
 
         // Cuenta total
         Table summaryTable = new Table(2);
         summaryTable.setWidthPercent(100);
-        summaryTable.addCell(new Cell().add(new Paragraph("Cantidad Total: 2").setBold())
-                .setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(new Paragraph("Total sin impuesto: 1,801,810.00").setBold())
-                .setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(new Paragraph("Total impuesto: 0.00").setBold())
-                .setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(new Paragraph("Total COP: 1,801,810.00").setBold())
-                .setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(new Paragraph("Valor en letras: UN MILLON OCHOCIENTOS UN MIL OCHOCIENTOS DIEZ PESOS M/CTE").setBold())
-                .setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Cantidad Total:","**cantidad prodcutos**")).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Total sin impuesto:"," $$$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Total impuesto:"," $$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Total COP:"," $$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Valor en letras:","**Valor en letras** M/CTE")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
         document.add(summaryTable);
 
         document.close();

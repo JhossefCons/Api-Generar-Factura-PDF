@@ -2,6 +2,7 @@ package facturacion.facturacion.compra;
 
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -29,9 +30,8 @@ public class PdfService {
     //Funcion que genera un codigo alfanumerico aleatorio
     public String generateCUFE (){
         UUID uuid = UUID.randomUUID();
-        String cufe = uuid.toString().replace("-", "");
 
-        return cufe;
+        return uuid.toString().replace("-", "");
     }
 
     // Funcion que recibe 2 String para hacer un parrafo con uno de ellos en negrita
@@ -128,11 +128,11 @@ public class PdfService {
         document.add(new Paragraph("PRODUCTOS").setTextAlignment(TextAlignment.CENTER).setBold());
         Table itemTable = new Table(new float[]{1, 3, 1, 2, 2});
         itemTable.setWidthPercent(100);
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("CANTIDAD").setBold()));
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("DESCRIPCIÓN").setBold()));
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("IVA").setBold()));
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("PRECIO UNITARIO").setBold()));
-        itemTable.addHeaderCell(new Cell().add(new Paragraph("VALOR TOTAL").setBold()));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("CANTIDAD").setBold()).setBackgroundColor(Color.LIGHT_GRAY));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("DESCRIPCIÓN").setBold()).setBackgroundColor(Color.LIGHT_GRAY));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("IVA").setBold()).setBackgroundColor(Color.LIGHT_GRAY));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("PRECIO UNITARIO").setBold()).setBackgroundColor(Color.LIGHT_GRAY));
+        itemTable.addHeaderCell(new Cell().add(new Paragraph("VALOR TOTAL").setBold()).setBackgroundColor(Color.LIGHT_GRAY));
 
         // Productos
         List<List<String>> items = Arrays.asList(
@@ -147,17 +147,27 @@ public class PdfService {
             itemTable.addCell(new Cell().add(new Paragraph(item.get(3))));
             itemTable.addCell(new Cell().add(new Paragraph(item.get(4))));
         }
+
+        itemTable.addCell(new Cell().add(boldText("Cantidad Total: ","**cantidad productos**")));
         document.add(itemTable);
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph(" "));
 
         // Cuenta total
         Table summaryTable = new Table(2);
         summaryTable.setWidthPercent(100);
-        summaryTable.addCell(new Cell().add(boldText("Cantidad Total: ","**cantidad prodcutos**")).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(boldText("Total sin impuesto: "," $$$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(boldText("Total impuesto: "," $$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(boldText("Total COP: "," $$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(boldText("Valor en letras: ","**Valor en letras** M/CTE")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add("TOTAL SIN IMPUESTOS").setBold().setBackgroundColor(Color.LIGHT_GRAY));
+        summaryTable.addCell(new Cell().add("$$$$$$$"));
+        summaryTable.addCell(new Cell().add("TOTAL CON IMPUESTOS").setBold().setBackgroundColor(Color.LIGHT_GRAY));
+        summaryTable.addCell(new Cell().add("$$$$$$$"));
+        summaryTable.addCell(new Cell().add("TOTAL A PAGAR").setBold().setBackgroundColor(Color.LIGHT_GRAY));
+        summaryTable.addCell(new Cell().add("$$$$$$$"));
+        summaryTable.addCell(new Cell().add(boldText("Valor en letras: ","**Valor en letras** M/CTE")).setBorder(Border.NO_BORDER));
         document.add(summaryTable);
+
+        document.add(new Paragraph(" "));
+
+        document.add(new Paragraph("**FACTURA GENERADA CON FINES EDUCATIVOS, NO TIENE NINGUN VALOR**").setFontColor(Color.RED).setTextAlignment(TextAlignment.CENTER));
 
         document.close();
 

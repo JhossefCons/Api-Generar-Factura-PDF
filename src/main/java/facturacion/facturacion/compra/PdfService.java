@@ -10,6 +10,11 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,14 +22,13 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
+
 @Service
 public class PdfService {
 
+    //Funcion que genera un codigo alfanumerico aleatorio
     public String generateCUFE (){
-        // Generar un UUID aleatorio
         UUID uuid = UUID.randomUUID();
-
-        // Convertir el UUID a string sin guiones
         String cufe = uuid.toString().replace("-", "");
 
         return cufe;
@@ -46,6 +50,8 @@ public class PdfService {
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document document = new Document(pdfDoc);
         document.setFontSize(10);
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        Date date = new Date();
 
         Image logo = null;
         try {
@@ -84,39 +90,38 @@ public class PdfService {
         // Tabla detalles de factura
         Table invoiceDetails = new Table(2);
         invoiceDetails.setWidthPercent(100);
-        invoiceDetails.addCell(new Cell().add(boldText("FECHA DE EMISIÓN:"," 2024/05/06")));
-        invoiceDetails.addCell(new Cell().add(boldText("AUT. NUMERACIÓN FAC:"," 18764063496317")));
-        invoiceDetails.addCell(new Cell().add(boldText("HORA DE EMISIÓN:"," 17:04:59")));
-        invoiceDetails.addCell(new Cell().add(boldText("FECHA DE VENCIMIENTO:"," 2024/05/06")));
-        invoiceDetails.addCell(new Cell().add(boldText("FECHA INICIO DE VIGENCIA:"," 2024/01/09")));
+        invoiceDetails.addCell(new Cell().add(boldText("FECHA DE EMISIÓN: ", String.valueOf(LocalDate.now()))));
+        invoiceDetails.addCell(new Cell().add(boldText("AUT. NUMERACIÓN FAC: "," 18764063496317")));
+        invoiceDetails.addCell(new Cell().add(boldText("HORA DE EMISIÓN: ",dateFormat.format(date))));
+        invoiceDetails.addCell(new Cell().add(boldText("FECHA DE VENCIMIENTO: "," 2024/05/06")));
         document.add(invoiceDetails);
 
         // Tabla detalles del Emisor
         document.add(new Paragraph("DATOS DEL EMISOR").setTextAlignment(TextAlignment.CENTER).setBold());
         Table transmitterDetails = new Table(2);
         transmitterDetails.setWidthPercent(100);
-        transmitterDetails.addCell(new Cell().add(boldText("NIT:"," **NIT**")));
-        transmitterDetails.addCell(new Cell().add(boldText("CORREO:","**CORREO***")));
-        transmitterDetails.addCell(new Cell().add(boldText("NOMBRE:","**NOMBRE**")));
-        transmitterDetails.addCell(new Cell().add(boldText("DIRECCION:","**DIRECCION**")));
-        transmitterDetails.addCell(new Cell().add(boldText("TIPO CONTRIBUYENTE:","**TIPO CONTRIBUYENTE**")));
-        transmitterDetails.addCell(new Cell().add(boldText("TELEFONO:","**+57311**")));
+        transmitterDetails.addCell(new Cell().add(boldText("NIT: "," **NIT**")));
+        transmitterDetails.addCell(new Cell().add(boldText("CORREO: ","**CORREO***")));
+        transmitterDetails.addCell(new Cell().add(boldText("NOMBRE: ","**NOMBRE**")));
+        transmitterDetails.addCell(new Cell().add(boldText("DIRECCION: ","**DIRECCION**")));
+        transmitterDetails.addCell(new Cell().add(boldText("TIPO CONTRIBUYENTE: ","**TIPO CONTRIBUYENTE**")));
+        transmitterDetails.addCell(new Cell().add(boldText("TELEFONO: ","**+57311**")));
         document.add(transmitterDetails);
 
         // Tabla detalles del tercero
         document.add(new Paragraph("DATOS DEL CLIENTE").setTextAlignment(TextAlignment.CENTER).setBold());
         Table clientDetails = new Table(2);
         clientDetails.setWidthPercent(100);
-        clientDetails.addCell(new Cell().add(boldText("CÓDIGO DEL CLIENTE:"," **codigo**")));
-        clientDetails.addCell(new Cell().add(boldText("DEPARTAMENTO:","**departamento***")));
-        clientDetails.addCell(new Cell().add(boldText("TIPO DE DOCUMENTO:","**Cédula**")));
-        clientDetails.addCell(new Cell().add(boldText("CIUDAD:","**ciudad**")));
-        clientDetails.addCell(new Cell().add(boldText("NÚMERO DE DOCUMENTO:","**documento**")));
-        clientDetails.addCell(new Cell().add(boldText("TELEFONO:","**+57311**")));
-        clientDetails.addCell(new Cell().add(boldText("NOMBRE DE CLIENTE:","**nombre**")));
-        clientDetails.addCell(new Cell().add(boldText("CORREO:","**@gmail.com**")));
-        clientDetails.addCell(new Cell().add(boldText("DIRECCIÓN DEL CLIENTE:","**direccion cliente**")));
-        clientDetails.addCell(new Cell().add(boldText("TIPO DE PERSONA:","**tipo de persona**")));
+        clientDetails.addCell(new Cell().add(boldText("CÓDIGO DEL CLIENTE: "," **codigo**")));
+        clientDetails.addCell(new Cell().add(boldText("DEPARTAMENTO: ","**departamento***")));
+        clientDetails.addCell(new Cell().add(boldText("TIPO DE DOCUMENTO: ","**Cédula**")));
+        clientDetails.addCell(new Cell().add(boldText("CIUDAD: ","**ciudad**")));
+        clientDetails.addCell(new Cell().add(boldText("NÚMERO DE DOCUMENTO: ","**documento**")));
+        clientDetails.addCell(new Cell().add(boldText("TELEFONO: ","**+57311**")));
+        clientDetails.addCell(new Cell().add(boldText("NOMBRE DE CLIENTE: ","**nombre**")));
+        clientDetails.addCell(new Cell().add(boldText("CORREO: ","**@gmail.com**")));
+        clientDetails.addCell(new Cell().add(boldText("DIRECCIÓN DEL CLIENTE: ","**direccion cliente**")));
+        clientDetails.addCell(new Cell().add(boldText("TIPO DE PERSONA: ","**tipo de persona**")));
         document.add(clientDetails);
 
         // tabla de productos
@@ -147,11 +152,11 @@ public class PdfService {
         // Cuenta total
         Table summaryTable = new Table(2);
         summaryTable.setWidthPercent(100);
-        summaryTable.addCell(new Cell().add(boldText("Cantidad Total:","**cantidad prodcutos**")).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(boldText("Total sin impuesto:"," $$$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(boldText("Total impuesto:"," $$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(boldText("Total COP:"," $$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
-        summaryTable.addCell(new Cell().add(boldText("Valor en letras:","**Valor en letras** M/CTE")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Cantidad Total: ","**cantidad prodcutos**")).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Total sin impuesto: "," $$$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Total impuesto: "," $$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Total COP: "," $$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
+        summaryTable.addCell(new Cell().add(boldText("Valor en letras: ","**Valor en letras** M/CTE")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));
         document.add(summaryTable);
 
         document.close();

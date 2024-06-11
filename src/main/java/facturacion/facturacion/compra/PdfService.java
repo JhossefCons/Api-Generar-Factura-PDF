@@ -10,8 +10,7 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.property.TextAlignment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-
-import javax.swing.*;
+import java.util.UUID;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,6 +19,16 @@ import java.util.List;
 
 @Service
 public class PdfService {
+
+    public String generateCUFE (){
+        // Generar un UUID aleatorio
+        UUID uuid = UUID.randomUUID();
+
+        // Convertir el UUID a string sin guiones
+        String cufe = uuid.toString().replace("-", "");
+
+        return cufe;
+    }
 
     // Funcion que recibe 2 String para hacer un parrafo con uno de ellos en negrita
     public Paragraph boldText(String textToBold, String textToNormal){
@@ -49,17 +58,28 @@ public class PdfService {
         }
 
         //Informacion de empresa
+        Paragraph informationParagraph = new Paragraph()
+                .setTextAlignment(TextAlignment.CENTER)
+                .add("**Nombre de la empresa**\n")
+                .add(boldText("Direccion: ","**Direccion**\n"))
+                .add(boldText("NIT: ","***NIT***\n"))
+                .add(boldText("Contacto: ","**Contacto**\n"))
+                .add(new Paragraph("Factura Electrónica de compra\n"))
+                .add(boldText("Resolución de facturación aprobado por la DIAN No.","\n 18764063496317"));
+
+        Table enterpriseDetails = new Table(2);
+        enterpriseDetails.setWidthPercent(100);
         if (logo != null) {
-            document.add(logo);
+            enterpriseDetails.addCell(new Cell().add(logo).setBorder(Border.NO_BORDER));
+        }else {
+            enterpriseDetails.addCell(new Cell().add("Imagen no encontrada").setBorder(Border.NO_BORDER));
         }
-        document.add(new Paragraph("Nombre de la Empresa")
-                .setTextAlignment(TextAlignment.CENTER).setBold());
-        document.add(boldText("Direccion: ","**Direccion**").setTextAlignment(TextAlignment.CENTER));
-        document.add(boldText("NIT: ","***NIT***").setTextAlignment(TextAlignment.CENTER));
-        document.add(boldText("Contacto: ","**Contacto**").setTextAlignment(TextAlignment.CENTER));
-        document.add(new Paragraph("Factura Electrónica de compra").setTextAlignment(TextAlignment.CENTER).setBold().setFontSize(14));
-        document.add(new Paragraph("No. POBE 505").setTextAlignment(TextAlignment.CENTER));
-        document.add(new Paragraph("Resolución de facturación aprobado por la DIAN No. 18764063496317").setTextAlignment(TextAlignment.CENTER).setBold());
+        enterpriseDetails.addCell(new Cell().add(informationParagraph).setBorder(Border.NO_BORDER));
+        document.add(enterpriseDetails);
+        document.add(new Paragraph(" "));
+
+        //Añadir codigo CUFE
+        document.add(boldText("CODIGO CUFE: ",generateCUFE()).setTextAlignment(TextAlignment.CENTER).setFontSize(8));
 
         // Tabla detalles de factura
         Table invoiceDetails = new Table(2);
@@ -67,15 +87,24 @@ public class PdfService {
         invoiceDetails.addCell(new Cell().add(boldText("FECHA DE EMISIÓN:"," 2024/05/06")));
         invoiceDetails.addCell(new Cell().add(boldText("AUT. NUMERACIÓN FAC:"," 18764063496317")));
         invoiceDetails.addCell(new Cell().add(boldText("HORA DE EMISIÓN:"," 17:04:59")));
-        invoiceDetails.addCell(new Cell().add(boldText("PREFIJO:"," POBE")));
         invoiceDetails.addCell(new Cell().add(boldText("FECHA DE VENCIMIENTO:"," 2024/05/06")));
-        invoiceDetails.addCell(new Cell().add(boldText("RANGO AUTORIZADO:"," 1-10000")));
-        invoiceDetails.addCell(new Cell().add(boldText("MÉTODO DE PAGO:"," Contado")));
         invoiceDetails.addCell(new Cell().add(boldText("FECHA INICIO DE VIGENCIA:"," 2024/01/09")));
         document.add(invoiceDetails);
 
+        // Tabla detalles del Emisor
+        document.add(new Paragraph("DATOS DEL EMISOR").setTextAlignment(TextAlignment.CENTER).setBold());
+        Table transmitterDetails = new Table(2);
+        transmitterDetails.setWidthPercent(100);
+        transmitterDetails.addCell(new Cell().add(boldText("NIT:"," **NIT**")));
+        transmitterDetails.addCell(new Cell().add(boldText("CORREO:","**CORREO***")));
+        transmitterDetails.addCell(new Cell().add(boldText("NOMBRE:","**NOMBRE**")));
+        transmitterDetails.addCell(new Cell().add(boldText("DIRECCION:","**DIRECCION**")));
+        transmitterDetails.addCell(new Cell().add(boldText("TIPO CONTRIBUYENTE:","**TIPO CONTRIBUYENTE**")));
+        transmitterDetails.addCell(new Cell().add(boldText("TELEFONO:","**+57311**")));
+        document.add(transmitterDetails);
+
         // Tabla detalles del tercero
-        document.add(new Paragraph("DATOS DEL TERCERO").setTextAlignment(TextAlignment.CENTER).setBold());
+        document.add(new Paragraph("DATOS DEL CLIENTE").setTextAlignment(TextAlignment.CENTER).setBold());
         Table clientDetails = new Table(2);
         clientDetails.setWidthPercent(100);
         clientDetails.addCell(new Cell().add(boldText("CÓDIGO DEL CLIENTE:"," **codigo**")));

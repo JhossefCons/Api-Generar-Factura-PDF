@@ -116,7 +116,7 @@ public class PdfService {
         document.add(itemTable);
 
         // Cuenta total
-        Table summaryTable = new Table(2);
+        Table summaryTable = new Table(2); 
         summaryTable.setWidthPercent(100);
         summaryTable.addCell(new Cell().add(boldText("Cantidad Total:","**cantidad prodcutos**")).setBorder(Border.NO_BORDER));
         summaryTable.addCell(new Cell().add(boldText("Total sin impuesto:"," $$$$$")).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER));

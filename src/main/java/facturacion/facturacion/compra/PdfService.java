@@ -64,14 +64,14 @@ public class PdfService {
         }
 
         //Informacion de empresa
-        Paragraph informationParagraph = new Paragraph()
-                .setTextAlignment(TextAlignment.CENTER)
-                .add("**Nombre de la empresa**\n")
-                .add(boldText("Direccion: ","**Direccion**\n"))
-                .add(boldText("NIT: ","***NIT***\n"))
-                .add(boldText("Contacto: ","**Contacto**\n"))
-                .add(new Paragraph("Factura Electrónica de compra\n"))
-                .add(boldText("Resolución de facturación aprobado por la DIAN No.","\n 18764063496317"));
+        Table enterpriseData = new Table(1);
+        enterpriseData.setWidthPercent(100);
+        enterpriseData.addCell(new Cell().add("**Nombre de la empresa**").setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
+        enterpriseData.addCell(new Cell().add(boldText("Direccion: ","**Direccion**")).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
+        enterpriseData.addCell(new Cell().add(boldText("NIT: ","***NIT***")).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
+        enterpriseData.addCell(new Cell().add(boldText("Contacto: ","**Contacto**")).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
+        enterpriseData.addCell(new Cell().add(new Paragraph("Factura Electrónica de compra")).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
+        enterpriseData.addCell(new Cell().add(boldText("Resolución de facturación aprobado por la DIAN No.","\n ############")).setTextAlignment(TextAlignment.CENTER).setBorder(Border.NO_BORDER));
 
         Table enterpriseDetails = new Table(2);
         enterpriseDetails.setWidthPercent(100);
@@ -80,7 +80,7 @@ public class PdfService {
         }else {
             enterpriseDetails.addCell(new Cell().add("Imagen no encontrada").setBorder(Border.NO_BORDER));
         }
-        enterpriseDetails.addCell(new Cell().add(informationParagraph).setBorder(Border.NO_BORDER));
+        enterpriseDetails.addCell(new Cell().add(enterpriseData).setBorder(Border.NO_BORDER));
         document.add(enterpriseDetails);
         document.add(new Paragraph(" "));
 
